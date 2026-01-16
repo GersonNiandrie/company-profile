@@ -14,7 +14,6 @@ export default function EditBlogPage() {
 
   useEffect(() => {
     const fetchPost = async () => {
-      // ✅ STEP 3.1: validate slug
       if (!params?.slug || typeof params.slug !== "string") {
         router.push("/blog");
         return;
@@ -32,7 +31,7 @@ export default function EditBlogPage() {
           return;
         }
 
-        const found = results[0];
+        const found = results[0] as any;
         setPost(found);
         setTitle(found.title);
         setContent(found.content);
