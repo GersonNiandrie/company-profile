@@ -3,89 +3,90 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Backendless from "@/lib/backendless";
-import { useUser } from "@/lib/UserContext";
 
 export default function EditBlogPage() {
-  const { user } = useUser();
-  const isAdmin = user?.roles?.includes("admin");
-  const router = useRouter();
   const params = useParams();
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [postId, setPostId] = useState("");
-  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const [post, setPost] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAdmin) return router.push("/blog");
-
     const fetchPost = async () => {
       try {
-        const results = await Backendless.Data.of("BlogPost").find({
-          condition: `slug = '${params.slug}'`,
-        });
-        const post = results[0];
-        if (!post) return router.push("/blog");
+        // ✅ Use DataQueryBuilder instead of { condition: ... }
+        const queryBuilder = Backendless.DataQueryBuilder.create()
+          .setWhereClause(`slug = '${params.slug}'`);
 
-        setTitle(post.title);
-        setContent(post.content);
-        setPostId(post.objectId);
+        const results = await Backendless.Data.of("BlogPost").find(queryBuilder);
+        const fetchedPost = results[0];
+
+        if (!fetchedPost) {
+          // If post not found, redirect to blog list
+          router.push("/blog");
+          return;
+        }
+
+        setPost(fetchedPost);
       } catch (err) {
-        console.error(err);
+        console.error("Failed to fetch blog post:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchPost();
-  }, [params.slug, user]);
+  }, [params.slug, router]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      await Backendless.Data.of("BlogPost").save({
-        objectId: postId,
-        title,
-        content,
-      });
-      router.push("/blog");
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (loading) return <p className="text-center mt-12">Loading...</p>;
+  if (!post) return null; // Post not found is already handled with redirect
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-md mx-auto p-6 bg-base-200 rounded shadow-md mt-12"
-    >
-      <button className="btn btn-ghost mb-4" onClick={() => router.back()}>
-      ← Back
-      </button>
-      <h2 className="text-xl font-bold mb-4">Edit Blog Post</h2>
-
-      <input
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        className="input input-bordered w-full mb-3"
-        required
-      />
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        className="textarea textarea-bordered w-full mb-3"
-        required
-      />
-
+    <div className="max-w-3xl mx-auto py-12 px-4">
+      {/* ===============================
+          BACK BUTTON — ALWAYS GOES TO BLOG LIST
+      ================================ */}
       <button
-        type="submit"
-        className="btn btn-primary w-full"
-        disabled={loading}
+        className="btn btn-ghost mb-4"
+        onClick={() => router.push("/blog")}
       >
-        {loading ? "Updating..." : "Update Post"}
+        ← Back to Blog
       </button>
-    </form>
+
+      <h1 className="text-2xl font-bold mb-4">Edit: {post.title}</h1>
+
+      {/* ===============================
+          PLACEHOLDER EDIT FORM
+      ================================ */}
+      <form className="space-y-4">
+        <div>
+          <label className="block font-medium mb-1">Title</label>
+          <input
+            type="text"
+            defaultValue={post.title}
+            className="input input-bordered w-full"
+          />
+        </div>
+        <div>
+          <label className="block font-medium mb-1">Content</label>
+          <textarea
+            defaultValue={post.content}
+            className="textarea textarea-bordered w-full"
+            rows={6}
+          />
+        </div>
+        <div className="flex gap-2">
+          <button type="submit" className="btn btn-primary">
+            Save Changes
+          </button>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={() => router.push("/blog")}
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
