@@ -8,23 +8,20 @@ export default function BlogPostPage() {
   const params = useParams();
   const router = useRouter();
   const [post, setPost] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPost = async () => {
-      // ✅ Guard: slug must exist
       if (!params?.slug || typeof params.slug !== "string") {
         router.push("/blog");
         return;
       }
 
       try {
-        // ✅ Type-safe Backendless query
-        const queryBuilder = Backendless.DataQueryBuilder.create();
-        queryBuilder.setWhereClause(`slug = '${params.slug}'`);
-        queryBuilder.setPageSize(1);
+        const query = Backendless.DataQueryBuilder.create();
+        query.setWhereClause(`slug = '${params.slug}'`);
+        query.setPageSize(1);
 
-        const results = await Backendless.Data.of("BlogPost").find(queryBuilder);
+        const results = await Backendless.Data.of("BlogPost").find(query);
 
         if (!results || results.length === 0) {
           router.push("/blog");
@@ -33,27 +30,18 @@ export default function BlogPostPage() {
 
         setPost(results[0]);
       } catch (error) {
-        console.error("Failed to fetch blog post:", error);
+        console.error(error);
         router.push("/blog");
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchPost();
   }, [params.slug, router]);
 
-  if (loading) {
-    return <p className="text-center mt-12">Loading...</p>;
-  }
-
-  if (!post) {
-    return null;
-  }
+  if (!post) return null;
 
   return (
     <div className="max-w-3xl mx-auto py-12 px-4">
-      {/* 🔙 Back button */}
       <button
         className="btn btn-ghost mb-6"
         onClick={() => router.push("/blog")}
@@ -62,14 +50,8 @@ export default function BlogPostPage() {
       </button>
 
       <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
-
-      <p className="text-sm opacity-70 mb-8">
-        By {post.author} ·{" "}
-        {new Date(post.created).toLocaleDateString()}
-      </p>
-
       <div
-        className="prose max-w-full"
+        className="prose"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
     </div>

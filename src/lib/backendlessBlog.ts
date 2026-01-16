@@ -11,21 +11,6 @@ export const getAllBlogPosts = async () => {
   }
 };
 
-// Get a single post by slug
-export const getBlogPostBySlug = async (slug: string) => {
-  try {
-    const queryBuilder = Backendless.DataQueryBuilder.create().setWhereClause(
-      `slug = '${slug}'`
-    );
-
-    const results = await Backendless.Data.of("BlogPost").find(queryBuilder);
-    return results[0] || null;
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
-};
-
 // Delete a post by objectId
 export const deleteBlogPost = async (objectId: string) => {
   try {

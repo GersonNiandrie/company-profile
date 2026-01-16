@@ -3,60 +3,85 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Backendless from "@/lib/backendless";
-import { getBlogPostBySlug } from "@/lib/backendlessBlog";
 
-export default function EditBlogPostPage() {
+export default function EditBlogPage() {
   const params = useParams();
   const router = useRouter();
+
   const [post, setPost] = useState<any>(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
   useEffect(() => {
     const fetchPost = async () => {
-      const result = await getBlogPostBySlug(params.slug);
-      if (!result) return router.push("/blog");
-      setPost(result);
-      setTitle(result.title);
-      setContent(result.content);
+      // ✅ STEP 3.1: validate slug
+      if (!params?.slug || typeof params.slug !== "string") {
+        router.push("/blog");
+        return;
+      }
+
+      try {
+        const query = Backendless.DataQueryBuilder.create();
+        query.setWhereClause(`slug = '${params.slug}'`);
+        query.setPageSize(1);
+
+        const results = await Backendless.Data.of("BlogPost").find(query);
+
+        if (!results || results.length === 0) {
+          router.push("/blog");
+          return;
+        }
+
+        const found = results[0];
+        setPost(found);
+        setTitle(found.title);
+        setContent(found.content);
+      } catch (err) {
+        console.error(err);
+        router.push("/blog");
+      }
     };
+
     fetchPost();
-  }, [params.slug]);
+  }, [params.slug, router]);
 
   const handleSave = async () => {
-    try {
-      await Backendless.Data.of("BlogPost").save({
-        ...post,
-        title,
-        content,
-      });
-      router.push(`/blog/${params.slug}`);
-    } catch (err) {
-      console.error(err);
-    }
+    if (!post) return;
+
+    await Backendless.Data.of("BlogPost").save({
+      ...post,
+      title,
+      content,
+    });
+
+    router.push("/blog");
   };
 
-  if (!post) return <p className="text-center mt-12">Loading...</p>;
+  if (!post) return null;
 
   return (
-    <div className="max-w-3xl mx-auto py-12 px-4 pt-32">
-      <button className="btn btn-ghost mb-4" onClick={() => router.push("/blog")}>
+    <div className="max-w-3xl mx-auto py-12 px-4">
+      <button
+        className="btn btn-ghost mb-6"
+        onClick={() => router.push("/blog")}
+      >
         ← Back to Blog
       </button>
-      <h1 className="text-2xl font-bold mb-4">Edit Blog Post</h1>
+
       <input
-        className="input input-bordered w-full mb-3"
+        className="input input-bordered w-full mb-4"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
+
       <textarea
-        className="textarea textarea-bordered w-full mb-3"
+        className="textarea textarea-bordered w-full h-64 mb-4"
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        rows={10}
       />
+
       <button className="btn btn-primary" onClick={handleSave}>
-        Save
+        Save Changes
       </button>
     </div>
   );
