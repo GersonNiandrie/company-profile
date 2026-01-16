@@ -2,7 +2,3 @@
 @plugin "daisyui"{
   themes: forest --default
 }
-
-html {
-  font-size: 18px;
-}
