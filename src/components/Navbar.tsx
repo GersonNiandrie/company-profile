@@ -5,14 +5,9 @@ import Image from "next/image";
 import { useUser } from "@/lib/UserContext";
 import Backendless from "@/lib/backendless";
 
-type NavbarProps = {
-  user: any;
-  setUser: any;
-};
-
-export default function Navbar({ user, setUser }: NavbarProps) {
+export default function Navbar() {
   const { user, setUser } = useUser();
-
+  
   const isAdmin = user?.roles?.includes("admin");
 
   const handleLogout = async () => {

@@ -21,7 +21,7 @@ export default function AuthWrapper({ children }: AuthWrapperProps) {
 
   return (
     <>
-      <Navbar user={user} setUser={setUser} />
+      <Navbar />
       <main className="flex-1 pt-28 px-4 sm:px-6 lg:px-12">
         {typeof children === "function" ? children({ user, setUser }) : children}
       </main>
