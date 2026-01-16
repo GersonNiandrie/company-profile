@@ -1,29 +1,38 @@
 import Backendless from "./backendless";
 
-// Get all posts (server-safe)
+// Get all posts
 export const getAllBlogPosts = async () => {
-  return await Backendless.Data.of("BlogPost").find();
+  try {
+    const posts = await Backendless.Data.of("BlogPost").find();
+    return posts;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
 };
 
-// Get a single post by slug (server-safe)
+// Get a single post by slug
 export const getBlogPostBySlug = async (slug: string) => {
-  const allPosts = await getAllBlogPosts();
-  return allPosts.find((post) => post.slug === slug) || null;
+  try {
+    const queryBuilder = Backendless.DataQueryBuilder.create().setWhereClause(
+      `slug = '${slug}'`
+    );
+
+    const results = await Backendless.Data.of("BlogPost").find(queryBuilder);
+    return results[0] || null;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
 };
 
-
-
-// Create a post
-export const createBlogPost = async (post: any) => {
-  return await Backendless.Data.of("BlogPost").save(post);
-};
-
-// Update a post (admin only)
-export const updateBlogPost = async (id: string, updated: any) => {
-  return await Backendless.Data.of("BlogPost").save({ objectId: id, ...updated });
-};
-
-// Delete a post (admin only)
-export const deleteBlogPost = async (id: string) => {
-  return await Backendless.Data.of("BlogPost").remove(id);
+// Delete a post by objectId
+export const deleteBlogPost = async (objectId: string) => {
+  try {
+    await Backendless.Data.of("BlogPost").remove({ objectId });
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
 };

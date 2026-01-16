@@ -40,10 +40,10 @@ export default function CreateBlogPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto py-12 px-4">
+    <div className="max-w-md mx-auto py-12 px-4 pt-32">
       <button
         className="btn btn-ghost mb-4"
-        onClick={() => router.back()}
+        onClick={() => router.push('/blog')}
       >
         ← Back
       </button>
