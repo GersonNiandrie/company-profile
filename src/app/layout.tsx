@@ -1,17 +1,20 @@
-import { ReactNode } from "react";
 import "./globals.css";
+import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { UserProvider } from "@/lib/UserContext";
-import Navbar from "@/components/Navbar";
 
-export default function Layout({ children }: { children: ReactNode }) {
+export const metadata = {
+  title: "Company Profile",
+  description: "Company website",
+};
+
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-base-100 text-base-content min-h-screen flex flex-col">
-        {/* Wrap everything in UserProvider */}
+      <body className="min-h-screen flex flex-col">
         <UserProvider>
           <Navbar />
-          <main className="flex-1 pt-28 px-4 sm:px-6 lg:px-12">{children}</main>
+          <main className="flex-1">{children}</main>
           <Footer />
         </UserProvider>
       </body>
