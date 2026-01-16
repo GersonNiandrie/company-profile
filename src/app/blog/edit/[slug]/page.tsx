@@ -1,44 +1,58 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { getBlogPostBySlug, updateBlogPost } from "@/lib/backendlessBlog";
+import { useParams, useRouter } from "next/navigation";
+import Backendless from "@/lib/backendless";
 import { useUser } from "@/lib/UserContext";
 
-interface Props {
-  params: { slug: string };
-}
-
-export default function EditBlogPage({ params }: Props) {
+export default function EditBlogPage() {
   const { user } = useUser();
+  const isAdmin = user?.roles?.includes("admin");
   const router = useRouter();
+  const params = useParams();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [postId, setPostId] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const isAdmin = user?.roles?.includes("admin");
-
   useEffect(() => {
     if (!isAdmin) return router.push("/blog");
 
     const fetchPost = async () => {
-      const post = await getBlogPostBySlug(params.slug);
-      if (!post) return router.push("/blog");
+      try {
+        const results = await Backendless.Data.of("BlogPost").find({
+          condition: `slug = '${params.slug}'`,
+        });
+        const post = results[0];
+        if (!post) return router.push("/blog");
 
-      setTitle(post.title);
-      setContent(post.content);
-      setPostId(post.objectId);
+        setTitle(post.title);
+        setContent(post.content);
+        setPostId(post.objectId);
+      } catch (err) {
+        console.error(err);
+      }
     };
+
     fetchPost();
   }, [params.slug, user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await updateBlogPost(postId, { title, content });
-    setLoading(false);
-    router.push("/blog");
+
+    try {
+      await Backendless.Data.of("BlogPost").save({
+        objectId: postId,
+        title,
+        content,
+      });
+      router.push("/blog");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

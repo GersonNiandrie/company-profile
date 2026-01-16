@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createBlogPost } from "@/lib/backendlessBlog";
+import Backendless from "@/lib/backendless";
 import { useUser } from "@/lib/UserContext";
 
 export default function CreateBlogPage() {
   const { user } = useUser();
   const router = useRouter();
-
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [content, setContent] = useState("");
@@ -23,15 +22,17 @@ export default function CreateBlogPage() {
     setError("");
 
     try {
-      await createBlogPost({
+      await Backendless.Data.of("BlogPost").save({
         title,
         slug,
         content,
         author: user.name || user.email,
+        created: new Date().toISOString(),
       });
 
       router.push("/blog");
     } catch (err: any) {
+      console.error(err);
       setError(err.message || "Failed to create post.");
     } finally {
       setLoading(false);
