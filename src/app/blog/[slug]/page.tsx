@@ -2,51 +2,62 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getBlogPostBySlug } from "@/lib/backendlessBlog";
+import Backendless from "@/lib/backendless";
 
 export default function BlogPostPage() {
-  const router = useRouter();
   const params = useParams();
-
-  const slug =
-    typeof params?.slug === "string" ? params.slug : null;
-
+  const router = useRouter();
   const [post, setPost] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  const fetchPost = async () => {
-    if (!params?.slug || typeof params.slug !== "string") {
-      router.push("/blog");
-      return;
-    }
+    const fetchPost = async () => {
+      if (!params?.slug || typeof params.slug !== "string") {
+        router.push("/blog");
+        return;
+      }
 
-    const result = await getBlogPostBySlug(params.slug);
+      try {
+        const results = await Backendless.Data.of("BlogPost").find({
+          condition: `slug = '${params.slug}'`,
+        });
 
-    if (!result) {
-      router.push("/blog");
-      return;
-    }
+        if (!results || results.length === 0) {
+          router.push("/blog");
+          return;
+        }
 
-    setPost(result);
-    setTitle(result.title);
-    setContent(result.content);
-  };
+        setPost(results[0]);
+      } catch (error) {
+        console.error("Failed to fetch blog post:", error);
+        router.push("/blog");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchPost();
-}, [params.slug, router]);
+    fetchPost();
+  }, [params.slug, router]);
 
-  if (!post) return <p className="text-center mt-32">Loading...</p>;
+  if (loading) {
+    return <p className="text-center mt-12">Loading...</p>;
+  }
+
+  if (!post) {
+    return null;
+  }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 pt-32 pb-12">
+    <div className="max-w-3xl mx-auto py-12 px-4">
       <button
-        className="btn btn-ghost mb-4"
+        className="btn btn-ghost mb-6"
         onClick={() => router.push("/blog")}
       >
         ← Back to Blog
       </button>
 
       <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
+
       <p className="text-sm opacity-70 mb-8">
         By {post.author} ·{" "}
         {new Date(post.created).toLocaleDateString()}
