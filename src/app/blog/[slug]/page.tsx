@@ -8,28 +8,35 @@ export default function BlogPostPage() {
   const params = useParams();
   const router = useRouter();
   const [post, setPost] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const results = await Backendless.Data.of("BlogPost").find({
-          condition: `slug = '${params.slug}'`,
-        });
+        const queryBuilder = Backendless.DataQueryBuilder.create()
+          .setWhereClause(`slug = '${params.slug}'`);
+
+        const results = await Backendless.Data.of("BlogPost").find(queryBuilder);
         setPost(results[0] || null);
       } catch (err) {
-        console.error(err);
+        console.error("Failed to fetch blog post:", err);
+        setPost(null);
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchPost();
   }, [params.slug]);
 
-  if (!post) return <p className="text-center mt-12">Loading...</p>;
+  if (loading) return <p className="text-center mt-12">Loading...</p>;
+  if (!post) return <p className="text-center mt-12">Post not found.</p>;
 
   return (
     <div className="max-w-3xl mx-auto py-12 px-4">
       <button
         className="btn btn-ghost mb-4"
-        onClick={() => router.push("/blog")} // always goes back to blog list
+        onClick={() => router.push("/blog")}
       >
         ← Back to Blog
       </button>
