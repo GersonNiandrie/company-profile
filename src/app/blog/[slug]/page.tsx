@@ -14,19 +14,26 @@ export default function BlogPostPage() {
   const [post, setPost] = useState<any>(null);
 
   useEffect(() => {
-    if (!slug) return;
+  const fetchPost = async () => {
+    if (!params?.slug || typeof params.slug !== "string") {
+      router.push("/blog");
+      return;
+    }
 
-    const fetchPost = async () => {
-      const result = await getBlogPostBySlug(slug);
-      if (!result) {
-        router.push("/blog");
-        return;
-      }
-      setPost(result);
-    };
+    const result = await getBlogPostBySlug(params.slug);
 
-    fetchPost();
-  }, [slug, router]);
+    if (!result) {
+      router.push("/blog");
+      return;
+    }
+
+    setPost(result);
+    setTitle(result.title);
+    setContent(result.content);
+  };
+
+  fetchPost();
+}, [params.slug, router]);
 
   if (!post) return <p className="text-center mt-32">Loading...</p>;
 
