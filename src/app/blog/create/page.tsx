@@ -41,6 +41,13 @@ export default function CreateBlogPage() {
 
   return (
     <div className="max-w-md mx-auto py-12 px-4">
+      <button
+        className="btn btn-ghost mb-4"
+        onClick={() => router.back()}
+      >
+        ← Back
+      </button>
+
       <h1 className="text-2xl font-bold mb-6">Create Blog Post</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input

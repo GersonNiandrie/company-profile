@@ -60,6 +60,9 @@ export default function EditBlogPage() {
       onSubmit={handleSubmit}
       className="max-w-md mx-auto p-6 bg-base-200 rounded shadow-md mt-12"
     >
+      <button className="btn btn-ghost mb-4" onClick={() => router.back()}>
+      ← Back
+      </button>
       <h2 className="text-xl font-bold mb-4">Edit Blog Post</h2>
 
       <input
