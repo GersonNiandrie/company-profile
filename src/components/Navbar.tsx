@@ -5,7 +5,12 @@ import Image from "next/image";
 import { useUser } from "@/lib/UserContext";
 import Backendless from "@/lib/backendless";
 
-export default function Navbar() {
+type NavbarProps = {
+  user: any;
+  setUser: any;
+};
+
+export default function Navbar({ user, setUser }: NavbarProps) {
   const { user, setUser } = useUser();
 
   const isAdmin = user?.roles?.includes("admin");
