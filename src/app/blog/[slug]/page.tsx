@@ -12,15 +12,19 @@ export default function BlogPostPage() {
 
   useEffect(() => {
     const fetchPost = async () => {
+      // ✅ Guard: slug must exist
       if (!params?.slug || typeof params.slug !== "string") {
         router.push("/blog");
         return;
       }
 
       try {
-        const results = await Backendless.Data.of("BlogPost").find({
-          condition: `slug = '${params.slug}'`,
-        });
+        // ✅ Type-safe Backendless query
+        const queryBuilder = Backendless.DataQueryBuilder.create();
+        queryBuilder.setWhereClause(`slug = '${params.slug}'`);
+        queryBuilder.setPageSize(1);
+
+        const results = await Backendless.Data.of("BlogPost").find(queryBuilder);
 
         if (!results || results.length === 0) {
           router.push("/blog");
@@ -49,6 +53,7 @@ export default function BlogPostPage() {
 
   return (
     <div className="max-w-3xl mx-auto py-12 px-4">
+      {/* 🔙 Back button */}
       <button
         className="btn btn-ghost mb-6"
         onClick={() => router.push("/blog")}
