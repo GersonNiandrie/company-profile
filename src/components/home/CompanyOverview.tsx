@@ -3,13 +3,12 @@ export default function CompanyOverview() {
     <section className="py-20 px-6 max-w-5xl mx-auto">
       <h2 className="text-4xl font-bold mb-6">About Us</h2>
       <p className="text-lg mb-4">
-        Our company was founded with the mission to deliver exceptional
-        solutions for our clients. Our team of experts brings decades of
-        experience across various industries.
+        We are a model kit store built for builders and collectors of all levels. From Gunpla to scale models and essential accessories, 
+        we offer carefully selected kits from trusted brands to support creativity and craftsmanship.
       </p>
       <p className="text-lg">
-        We believe in innovation, collaboration, and integrity to build
-        long-lasting relationships with our customers.
+        Whether you’re starting your first build or refining your next display piece, 
+        we’re here to make every build more rewarding.
       </p>
     </section>
   );

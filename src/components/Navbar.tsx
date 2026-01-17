@@ -20,7 +20,7 @@ export default function Navbar() {
   };
 
   return (
-    <div className="navbar bg-base-100 shadow-md px-6 fixed top-0 left-0 w-full z-50">
+    <div className="navbar bg-base-100 shadow-md px-6 sticky top-0 left-0 w-full z-50">
       <div className="flex-1 flex items-center">
         <Link href="/" className="flex items-center">
           <Image src="/company.png" alt="Company Logo" width={75} height={75} />
@@ -34,13 +34,13 @@ export default function Navbar() {
       {/* NAVBAR BUTTONS CONTAINER */}
       {/* ===================== */}
       <div className="flex-none flex items-center gap-4">
-        <Link href="/about" className="btn btn-ghost btn-sm">
+        <Link href="/about" className="btn btn-ghost btn-sm bg-neutral">
           About
         </Link>
-        <Link href="/services" className="btn btn-ghost btn-sm">
+        <Link href="/services" className="btn btn-ghost btn-sm bg-neutral">
           Products
         </Link>
-        <Link href="/blog" className="btn btn-ghost btn-sm">
+        <Link href="/blog" className="btn btn-ghost btn-sm bg-neutral">
           Blog
         </Link>
 
@@ -58,7 +58,7 @@ export default function Navbar() {
           </>
         ) : (
           <>
-            <Link href="/login" className="btn btn-ghost btn-sm">
+            <Link href="/login" className="btn btn-primary btn-sm">
               Login
             </Link>
             <Link href="/register" className="btn btn-primary btn-sm">

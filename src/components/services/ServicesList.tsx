@@ -1,47 +1,62 @@
-type Service = {
-  title: string;
-  description: string;
-  price?: string;
-};
+export default function ProductListSection() {
+  const products = [
+    {
+      title: "Gundam Plastic Model Kits",
+      description:
+        "Bandai Gunpla kits including HG, RG, MG, and limited releases for builders of all levels.",
+      image:
+        "/products/gundam-kit.jpg",
+    },
+    {
+      title: "Scale & Other Model Kits",
+      description:
+        "Military, automotive, aircraft, and sci-fi kits from trusted global manufacturers.",
+      image:
+        "/products/other-kits.webp",
+    },
+    {
+      title: "Tools & Accessories",
+      description:
+        "Precision nippers, sanding tools, paints, airbrushes, decals, and everything you need to customize.",
+      image:
+        "/products/tools.jpg",
+    },
+  ];
 
-const services: Service[] = [
-  {
-    title: "Web Development",
-    description:
-      "Custom web applications built with modern technologies, focusing on performance and scalability.",
-    price: "Starting from $1,500",
-  },
-  {
-    title: "UI / UX Design",
-    description:
-      "User-centered design that enhances usability and improves customer engagement.",
-    price: "Starting from $800",
-  },
-  {
-    title: "Technical Consulting",
-    description:
-      "Expert guidance on architecture, technology choices, and development workflows.",
-  },
-];
-
-export default function ServicesList() {
   return (
-    <section className="bg-base-200 py-20 px-6">
-      <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
-        {services.map((service) => (
-          <div key={service.title} className="card bg-base-100 shadow-lg">
-            <div className="card-body">
-              <h2 className="card-title">{service.title}</h2>
-              <p className="opacity-80">{service.description}</p>
+    <section className="px-6 py-20 bg-neutral">
+      <div className="max-w-7xl mx-auto">
+        <h2 className="text-4xl font-bold text-center mb-12">
+          What We Offer
+        </h2>
 
-              {service.price && (
-                <p className="mt-4 font-semibold text-primary">
-                  {service.price}
-                </p>
-              )}
+        <div className="grid gap-10 md:grid-cols-3">
+          {products.map((p) => (
+            <div
+              key={p.title}
+              className="card bg-base-100 shadow-lg hover:shadow-xl transition"
+            >
+              <figure className="relative h-56">
+                <img
+                  src={p.image}
+                  alt={p.title}
+                  className="object-cover"
+                />
+              </figure>
+
+              <div className="card-body">
+                <h3 className="card-title">{p.title}</h3>
+                <p className="text-sm opacity-80">{p.description}</p>
+
+                <div className="card-actions justify-end mt-4">
+                  <button className="btn btn-outline btn-sm">
+                    Browse
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );

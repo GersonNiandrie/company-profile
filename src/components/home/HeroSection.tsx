@@ -4,14 +4,14 @@ import { useState, useEffect } from "react";
 
 const images = [
   "/hero1.jpg",
-  "/hero2.jpg",
-  "/hero3.jpg",
+  "/hero2.png",
+  "/hero3.png",
+  "/hero4.jpg"
 ];
 
 export default function HeroCarousel() {
   const [current, setCurrent] = useState(0);
 
-  // Autoplay every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % images.length);
@@ -45,7 +45,6 @@ export default function HeroCarousel() {
         <p className="text-xl opacity-90">
           Discover precision, creativity, and endless possibilities in every kit.
         </p>
-        <button className="btn btn-primary mt-6">Learn More</button>
       </div>
     </section>
   );

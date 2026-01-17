@@ -1,13 +1,13 @@
-import ServicesIntro from "@/components/services/ServicesIntro";
-import ServicesList from "@/components/services/ServicesList";
-import ServicesTestimonials from "@/components/services/ServicesTestimonials";
-
-export default function ServicesPage() {
+import IntroSection from "@/components/services/ServicesIntro";
+import ProductListSection from "@/components/services/ServicesList";
+import ProductTestimonials
+ from "@/components/services/ServicesTestimonials";
+export default function ProductsPage() {
   return (
     <main>
-      <ServicesIntro />
-      <ServicesList />
-      <ServicesTestimonials />
+      <IntroSection />
+      <ProductListSection />
+      <ProductTestimonials />
     </main>
   );
 }
